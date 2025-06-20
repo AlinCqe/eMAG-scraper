@@ -12,7 +12,7 @@ After scraping, it stores the item name and price in to a csv or excel file.
 eMAG uses three different methods to show items:
  1. Static elements in the initial HTML
  2. A hidden endpoint with up to 100 items (these seem to be some kind of recommended/trend items)
- 3. A second endpoint that contains all or the remaining items (possibly the full product list)
+ 3. A second endpoint that contains all the remaining items (maybe the full product list, im not sure)
 
 ## Tools & Methods
 
