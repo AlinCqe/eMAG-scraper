@@ -27,9 +27,9 @@ eMAG uses three different methods to show items:
  3. Move on to the second endpoint, looping through all pages (could be over 5000 items, with each page containing up to 100).
  4. A system is in place to skip duplicates so no item is repeated.
  5. The script extracts:
-    -Item name
-    -Price
-    -Currency (e.g. "RON")
+    - Item name
+    - Price
+    - Currency (e.g. "RON")
 
 All data is saved into a CSV file using pandas.
 
