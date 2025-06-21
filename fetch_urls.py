@@ -45,13 +45,17 @@ def fetch_urls(search_item):
 
     # Gets the second hidden api
     for _ in range(5):
+        status = False
         try:
             for request in driver.requests:
                 if request.response.status_code == 200:
                     if request.url.startswith('https://www.emag.ro/search-by-url?source_id='):
                         second_hidden_api = f'{request.url}'
                         print('Second URL catched')
-                        break                        
+                        status = True
+                        break        
+            if status == True:
+                break                
 
             # Try clicking the cookies thing
             try:
