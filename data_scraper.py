@@ -42,7 +42,7 @@ def html_scraper(search_item):
         itmes_used_html_scraper += 1
 
     df = pd.DataFrame(fetch) 
-    df.to_csv('data.csv', mode='a', index=False, header=not os.path.exists('data.csv') )
+    df.to_csv('data.csv', mode='a', index=False)
     fetch.clear()
 
     print(f'Used a total of {itmes_used_html_scraper} items')
@@ -63,7 +63,7 @@ def data_extract_first_api(first_hidden_api):
 
         item_name = item['name']
         item_price = item['offer']['price']['current']
-        item_currency = item['offer']['price']['currency']['name']['default']
+        item_currency = item['offer']['price']['currency']['name']['display']
         
         fetch.append({'item_name': item_name, 'item_price': item_price, 'item_currency': item_currency})
         items_id_used_set.add(item['id'])
@@ -71,13 +71,13 @@ def data_extract_first_api(first_hidden_api):
 
     if len(fetch) >= 200:
         df = pd.DataFrame(fetch) 
-        df.to_csv('data.csv', mode='a', index=False, header=not os.path.exists('data.csv') )
+        df.to_csv('data.csv', mode='a', index=False)
         fetch.clear()
 
     
 
     df = pd.DataFrame(fetch) 
-    df.to_csv('data.csv', mode='a', index=False, header=not os.path.exists('data.csv') )
+    df.to_csv('data.csv', mode='a', index=False)
     
     print(f'Total items printed with the first url: {items_used_count_first_api}')
     print('First url scraper finished')
@@ -103,7 +103,7 @@ def data_extract_second_api(second_hidden_api):
                     
                     item_name = item['name']
                     item_price = item['offer']['price']['current']
-                    item_currency = item['offer']['price']['currency']['name']['default']
+                    item_currency = item['offer']['price']['currency']['name']['display']
                     
                     fetch.append({'item_name': item_name, 'item_price': item_price, 'item_currency': item_currency})
                     items_id_used_set.add(item['id'])
@@ -111,7 +111,7 @@ def data_extract_second_api(second_hidden_api):
 
                 if len(fetch) >= 200:
                     df = pd.DataFrame(fetch) 
-                    df.to_csv('data.csv', mode='a', index=False, header=not os.path.exists('data.csv') )
+                    df.to_csv('data.csv', mode='a', index=False)
                     fetch.clear()
 
 
@@ -132,9 +132,9 @@ def data_extract_second_api(second_hidden_api):
 
 # Stores the items that my be left in memory
 df = pd.DataFrame(fetch) 
-df.to_csv('data.csv', mode='a', index=False, header=not os.path.exists('data.csv') )
+df.to_csv('data.csv', mode='a', index=False)
 
-
+# header=not os.path.exists('data.csv')
 
 
 if __name__ == '__main__':
