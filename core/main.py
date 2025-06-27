@@ -1,14 +1,21 @@
-from fetch_urls import fetch_urls
-from data_scraper import data_extract_first_api, data_extract_second_api, html_scraper
+from .fetch_urls import fetch_urls
+from .data_scraper import data_extract_first_api, data_extract_second_api, html_scraper
 
 
+def main(search_item):
 
-search_item = input('What item do you want to search for?: ')
-first_url, second_url = fetch_urls(search_item)
+    first_url, second_url = fetch_urls(search_item)
+    
+       
 
-html_scraper(search_item)
-data_extract_first_api(first_url)
-data_extract_second_api(second_url)
+    html_scraper(search_item)
+    data_extract_first_api(first_url)
+
+    if second_url:
+        data_extract_second_api(second_url)
+
+if __name__ == '__main__':
+    main()
 
 
 ## FUNCIONA LO DE CATCH LAS URL, AHORA REQUEST ESAS URLS I RECOGER DATA DE ELLAS - done

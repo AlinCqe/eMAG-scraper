@@ -9,7 +9,8 @@ import time
 import os
 
 options = Options()
-options.add_argument('--headless')
+options.add_argument("--headless")
+options.add_argument("window-size=1920,1080")
 options.add_argument("--log-level=3")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
@@ -44,6 +45,7 @@ def fetch_urls(search_item):
     first_hidden_api = first_hidden_api.replace(suffix, f'page%5Boffset%5D=0&page%5Blimit%5D=100')
 
     # Gets the second hidden api
+    second_hidden_api=None
     for _ in range(5):
         status = False
         try:
@@ -90,9 +92,10 @@ def fetch_urls(search_item):
 
 
     driver.quit()
-    
-    return first_hidden_api, second_hidden_api
-
+    if second_hidden_api:
+        return first_hidden_api, second_hidden_api
+    else:
+        return first_hidden_api, None
 
 
 
