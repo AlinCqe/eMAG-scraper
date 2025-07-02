@@ -1,0 +1,12 @@
+
+
+make filter to skip data 
+set with the searched item
+while loop for word in searched item
+if w in item_name
+save the item
+else
+pass
+
+
+use console logs instead of prints

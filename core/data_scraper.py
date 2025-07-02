@@ -23,7 +23,7 @@ items_id_used_set = set()
 
 current_time = time.ctime(time.time())
 
-def html_scraper(search_item):
+def html_scraper(search_item, search_item_words_list):
     
     print('Starting HTML scraper')
 
@@ -40,6 +40,13 @@ def html_scraper(search_item):
             continue
         
         item_name = item.get('data-name')
+        passed_the_filter = True
+        for word in search_item_words_list:
+            if word not in item_name.lower():
+                passed_the_filter = False
+        if not passed_the_filter:
+            continue
+
         item_price_and_currency = item.find('div', 'd-inline-flex align-items-center').find('p', 'product-new-price').text
         item_price_and_currency = item_price_and_currency.removeprefix('de la ')
 
@@ -65,7 +72,7 @@ def html_scraper(search_item):
     print(f'Used a total of {items_used_html_scraper} items in the html scraper')
     print('HTML scraper finished')
 
-def data_extract_first_api(first_hidden_api):
+def data_extract_first_api(first_hidden_api, search_item_words_list):
     items_used_count_first_api = 0
     print('Starting first api scraper')
     # Calls the first hidden api and saves items until there is no more data
@@ -78,8 +85,15 @@ def data_extract_first_api(first_hidden_api):
         item_id = int(item['id'])
         if item_id in items_id_used_set:
             continue
-
+        
         item_name = item['name']
+        passed_the_filter = True
+        for word in search_item_words_list:
+            if word not in item_name.lower():
+                passed_the_filter = False
+        if not passed_the_filter:
+            continue
+
         item_price = item['offer']['price']['current']
         item_currency = item['offer']['price']['currency']['name']['display']
         
@@ -103,7 +117,7 @@ def data_extract_first_api(first_hidden_api):
 
 
 # Gets the second json file with more data and prints items + prices using second hidden url
-def data_extract_second_api(second_hidden_api):
+def data_extract_second_api(second_hidden_api, search_item_words_list):
     items_used_count_second_api = 0
     # There may not be a second URL
     if second_hidden_api is None:
@@ -122,6 +136,14 @@ def data_extract_second_api(second_hidden_api):
                     continue
                     
                 item_name = item['name']
+                passed_the_filter = True
+                for word in search_item_words_list:
+                    if word not in item_name.lower():
+                        passed_the_filter = False
+                if not passed_the_filter:
+                    continue
+
+
                 item_price = item['offer']['price']['current']
                 item_currency = item['offer']['price']['currency']['name']['display']
                 
