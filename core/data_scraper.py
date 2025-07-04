@@ -3,7 +3,6 @@ import os
 from requests.exceptions import JSONDecodeError
 import time
 import random
-import pandas as pd
 from bs4 import BeautifulSoup
 
 from .db_config import collection

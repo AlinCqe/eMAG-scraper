@@ -6,14 +6,11 @@ views = Blueprint('views', __name__)
 
 
 
-@views.route('/', methods=['GET'])
+@views.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('index.html')
+    if request.method == 'POST':
+        item = request.form['item']
+        main(item)
 
-@views.route('/search', methods=['POST'])
-def hola():
-    item = request.form['item']
-    main(item)
-    return f'Hello World item {item}'
-    
+    return render_template('index.html')
 
