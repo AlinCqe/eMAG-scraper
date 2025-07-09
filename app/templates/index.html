@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+
 </head>
+
 <body>
-    <form action="" method="POST">
+
+<form id='scrapeForm'>
     <label for="item">Enter item:</label>
     <input type="text" id="item" name="item" required>
     <button type="submit">Search</button>
 </form>
+
+
 </body>
 </html>

@@ -96,7 +96,6 @@ class Driver:
         self.start_driver()
         first_hidden_api = self.first_api_fetch()
         second_hidden_api = self.second_api_fetch()
-        self.driver.quit()
         return(first_hidden_api, second_hidden_api)
 
 

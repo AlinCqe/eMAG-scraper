@@ -18,15 +18,16 @@ headers = {
 
 
 fetch = []
-items_id_used_set = set()
+items_id_skip_duplicates = set()
 
 current_time = time.ctime(time.time())
 
 def html_scraper(search_item, search_item_words_list):
+    html_items_id_used = set()
+    items_used_html_scraper = 0
     
     print('Starting HTML scraper')
 
-    items_used_html_scraper = 0
     search_item_formated = search_item.strip().replace(' ', '+')
     response = requests.get(f'https://www.emag.ro/search/{search_item_formated}', headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -35,17 +36,18 @@ def html_scraper(search_item, search_item_words_list):
     for item in items:
 
         item_id = int(item.get('data-product-id'))
-        if item_id in items_id_used_set:
+        if item_id in items_id_skip_duplicates:
             continue
         
         item_name = item.get('data-name')
+        
         passed_the_filter = True
         for word in search_item_words_list:
             if word not in item_name.lower():
                 passed_the_filter = False
         if not passed_the_filter:
             continue
-
+        
         item_price_and_currency = item.find('div', 'd-inline-flex align-items-center').find('p', 'product-new-price').text
         item_price_and_currency = item_price_and_currency.removeprefix('de la ')
 
@@ -64,12 +66,18 @@ def html_scraper(search_item, search_item_words_list):
             }, 
             upsert=True)
 
-        items_id_used_set.add(item_id)    
+        items_id_skip_duplicates.add(item_id) 
+        html_items_id_used.add(item_id) 
         items_used_html_scraper += 1
 
 
     print(f'Used a total of {items_used_html_scraper} items in the html scraper')
     print('HTML scraper finished')
+    return list(html_items_id_used)
+    
+
+
+
 
 def data_extract_first_api(first_hidden_api, search_item_words_list):
     items_used_count_first_api = 0
@@ -82,7 +90,7 @@ def data_extract_first_api(first_hidden_api, search_item_words_list):
     for item in items:
         # Check if item id hasnt been used
         item_id = int(item['id'])
-        if item_id in items_id_used_set:
+        if item_id in items_id_skip_duplicates:
             continue
         
         item_name = item['name']
@@ -108,7 +116,7 @@ def data_extract_first_api(first_hidden_api, search_item_words_list):
             }, 
             upsert=True)
 
-        items_id_used_set.add(item_id)
+        items_id_skip_duplicates.add(item_id)
         items_used_count_first_api += 1
 
     print(f'Used a total of {items_used_count_first_api} items with the first end point')
@@ -131,7 +139,7 @@ def data_extract_second_api(second_hidden_api, search_item_words_list):
             items = data['data']['items']
             for item in items:
                 item_id = int(item['id'])
-                if item_id in items_id_used_set:
+                if item_id in items_id_skip_duplicates:
                     continue
                     
                 item_name = item['name']
@@ -146,7 +154,7 @@ def data_extract_second_api(second_hidden_api, search_item_words_list):
                 item_price = item['offer']['price']['current']
                 item_currency = item['offer']['price']['currency']['name']['display']
                 
-                items_id_used_set.add(item_id)
+                items_id_skip_duplicates.add(item_id)
                 items_used_count_second_api += 1
 
 
