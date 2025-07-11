@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, ElementClickInterceptedException
 
 import time
-
+import re
 
 class Driver:
 
@@ -41,8 +41,7 @@ class Driver:
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
 
         # Set the page items limit to max so we dont have to loop trought the same page
-        suffix = f'page%5Boffset%5D=0&page%5Blimit%5D=12'
-        first_hidden_api = first_hidden_api.replace(suffix, f'page%5Boffset%5D=0&page%5Blimit%5D=100')
+        first_hidden_api = re.sub(r'page%5Boffset%5D=0&page%5Blimit%5D=\d{1,3}', 'page%5Boffset%5D=0&page%5Blimit%5D=100', first_hidden_api)
         self.driver.requests.clear()
         return first_hidden_api
 

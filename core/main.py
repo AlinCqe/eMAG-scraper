@@ -1,19 +1,17 @@
 from .fetch_urls import Driver
-from .data_scraper import data_extract_first_api, data_extract_second_api, html_scraper
+from .data_scraper import DataScaper
 from .query import get_items_by_ids
 from concurrent.futures import ThreadPoolExecutor
 
 
 def main(search_item):
-    
+
+    data_scraper = DataScaper(search_item, '', '')
     #driver = Driver(search_item=search_item)
-    search_item_words_list = search_item.split() 
 
-    html_items_id_used = html_scraper(search_item=search_item,search_item_words_list=search_item_words_list)
+    html_items_ids_used = data_scraper.html_scraper()
 
-    html_items_data = get_items_by_ids(ids_list=html_items_id_used)
-
-    return get_items_by_ids(ids_list=html_items_id_used)
+    return get_items_by_ids(ids_list=html_items_ids_used)
 
 
     #First make endpoint with html page items, after continue with both endpoints(data_extract_first_api, data_extract_second_api functions)
