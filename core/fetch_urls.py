@@ -15,47 +15,47 @@ class Driver:
         self.options.add_argument("--headless")
         self.options.add_argument("window-size=1920,1080")
         self.search_item = search_item
+        self.search_item_formated = self.search_item.strip().replace(' ', '+')
         self.driver =  webdriver.Chrome(options=self.options )
         self.wait = WebDriverWait(self.driver, 10)
 
-    def start_driver(self):
-        self.search_item_formated = self.search_item.strip().replace(' ', '+')
-        self.driver.get(f'https://www.emag.ro/search/{self.search_item_formated}')
-
+        self.first_hidden_api = None
+        self.second_hidden_api = None
 
     def first_api_fetch(self):
+
         self.driver.requests.clear()
-        first_hidden_api = None
+
+        self.driver.get(f'https://www.emag.ro/search/{self.search_item_formated}')
+
         # Gets the first hidden api 
-        while not first_hidden_api:
-            for request in self.driver.requests:
-                if request.response:
-                    if request.url.startswith('https://sapi.emag.ro/recommendations/by-zone-by-filters'):
-                        first_hidden_api = f'{request.url}'
-                        print('Firts URL caught')
-                        break
-            if not first_hidden_api:
+        while not self.first_hidden_api:
+
+            self.first_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://sapi.emag.ro/recommendations/by-zone-by-filters')
+            print(self.first_hidden_api)
+
+
+            if not self.first_hidden_api:
                 print('Reloading first page')
                 self.driver.refresh()
                 time.sleep(1)
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
+        print('Firts URL caught')
+        self.first_hidden_api = self.set_page_limit_to_100(self.first_hidden_api)
+        print(self.first_hidden_api)
+        return self.first_hidden_api
 
         # Set the page items limit to max so we dont have to loop trought the same page
-        first_hidden_api = re.sub(r'page%5Boffset%5D=0&page%5Blimit%5D=\d{1,3}', 'page%5Boffset%5D=0&page%5Blimit%5D=100', first_hidden_api)
-        self.driver.requests.clear()
-        return first_hidden_api
-
 
 
     def second_api_fetch(self):
 
         for _ in range(5):
-            for request in self.driver.requests:
-                if request.response and request.response.status_code == 200:
-                    if request.url.startswith('https://www.emag.ro/search-by-url?source_id='):
-                        second_hidden_api = f'{request.url}'
-                        print('Second URL caught')
-                        return second_hidden_api       
+            self.second_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://www.emag.ro/search-by-url?source_id=')
+
+            if self.second_hidden_api:
+                print('Second URL caught')
+                return self.second_hidden_api       
 
             # Try clicking the cookies thing
             try:
@@ -87,14 +87,24 @@ class Driver:
                 time.sleep(1)
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
             
-        
-
-    def fetch_urls(self):
-
-        print('Starting url fetcher')
-        self.start_driver()
-        first_hidden_api = self.first_api_fetch()
-        second_hidden_api = self.second_api_fetch()
-        return(first_hidden_api, second_hidden_api)
+        if not self.second_hidden_api:
+            return None
 
 
+    def set_page_limit_to_100(self, word):
+        return re.sub(r'page%5Boffset%5D=0&page%5Blimit%5D=\d{1,3}', 'page%5Boffset%5D=0&page%5Blimit%5D=100', word)
+
+
+    def get_url_from_requests(self, requests_list, prefix):
+        for request in requests_list:
+
+            if not request.response:
+                continue
+
+            if request.url.startswith(prefix):
+
+                url = f'{request.url}'
+                self.driver.requests.clear()
+
+                return url
+        return None

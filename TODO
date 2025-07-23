@@ -1,12 +1,16 @@
-
-
-make filter to skip data 
-set with the searched item
-while loop for word in searched item
-if w in item_name
-save the item
-else
-pass
-
-
 use console logs instead of prints
+
+Make code run async - kind of done
+
+Change the second url fetcher to make it more efective, make it run faster
+maybe dont iterate trought all 5 pages, find whats blocking the next page button
+
+TODO
+
+Second api scraper may be done in more steps
+not return 12k rows at once
+
+get_url from requests refactor to use it twice
+then modify the test for that method
+
+

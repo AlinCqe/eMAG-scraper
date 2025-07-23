@@ -3,7 +3,7 @@ document.getElementById('scrapeForm').addEventListener('submit', function(e){
 
     const search_item = document.getElementById('item').value
     
-    fetch('/', 
+    fetch('/htmlscraper', 
         {
             method: 'POST',
             headers: {
@@ -13,6 +13,18 @@ document.getElementById('scrapeForm').addEventListener('submit', function(e){
         }
     )
     .then(response => response.json())
-    .then(data => {console.log(jsonify)})
+    .then(data => {console.log(data);
+        
+        return fetch('/firstapiscraper')
+        
+    .then(response => response.json())
+    .then(data => {console.log(data)
+        
+        return fetch('/secondapiscraper')
 
-});
+    .then(response => response.json())
+    .then(data => {console.log(data)})
+
+        })
+    })
+})
