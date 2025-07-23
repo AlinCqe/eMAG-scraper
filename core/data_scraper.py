@@ -116,7 +116,6 @@ class DataScaper:
 
             # Check if item id hasnt been used
             if item_id in self.items_ids_skip_duplicates:
-                print(item_name, 'skip')
                 continue
             
             if not all(word in item_name.lower() for word in self.search_item_words):

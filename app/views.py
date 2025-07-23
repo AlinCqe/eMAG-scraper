@@ -17,7 +17,6 @@ def html_scraper():
     global session
     data = request.get_json()
     item = data['query']
-
     session = ScrapingSession(item)
  
     return jsonify(session.html_scraper())

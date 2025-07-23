@@ -32,7 +32,6 @@ class Driver:
         while not self.first_hidden_api:
 
             self.first_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://sapi.emag.ro/recommendations/by-zone-by-filters')
-            print(self.first_hidden_api)
 
 
             if not self.first_hidden_api:
@@ -42,7 +41,7 @@ class Driver:
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
         print('Firts URL caught')
         self.first_hidden_api = self.set_page_limit_to_100(self.first_hidden_api)
-        print(self.first_hidden_api)
+
         return self.first_hidden_api
 
         # Set the page items limit to max so we dont have to loop trought the same page
