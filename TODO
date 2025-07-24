@@ -11,3 +11,4 @@ Mongodb clean up, dont save 100 prices for the same day, just one and if it chan
 run it daily for predifend search terms, just and be able to run all the code or without the second api scraper
 
 
+make .env file and push the db config file too
