@@ -13,7 +13,7 @@ document.getElementById('scrapeForm').addEventListener('submit', function(e){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({query: search_item, deepSearch: deepSearch}) 
+            body: JSON.stringify({query: search_item})
         }
     )
     .then(response => response.json())
@@ -31,7 +31,7 @@ document.getElementById('scrapeForm').addEventListener('submit', function(e){
         .then(response => response.json())
         .then(data => {console.log(data)})
         }
-        
+
         })
     })
 })

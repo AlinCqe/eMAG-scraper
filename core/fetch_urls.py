@@ -33,61 +33,88 @@ class Driver:
 
             self.first_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://sapi.emag.ro/recommendations/by-zone-by-filters')
 
-
+            # if it wasnt able to get first api reload the page 
             if not self.first_hidden_api:
                 print('Reloading first page')
                 self.driver.refresh()
                 time.sleep(1)
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
+
         print('Firts URL caught')
+
         self.first_hidden_api = self.set_page_limit_to_100(self.first_hidden_api)
 
         return self.first_hidden_api
 
-        # Set the page items limit to max so we dont have to loop trought the same page
-
 
     def second_api_fetch(self):
 
+        self.driver.requests.clear()
+
+
         for _ in range(5):
-            self.second_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://www.emag.ro/search-by-url?source_id=')
 
-            if self.second_hidden_api:
-                print('Second URL caught')
-                return self.second_hidden_api       
-
-            # Try clicking the cookies thing
+            # Try closing a info popup
             try:
-                firts_cookies_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo')))
-                firts_cookies_button.click()
-            except (StaleElementReferenceException,TimeoutException,ElementClickInterceptedException):
-                print('Could not click "Cookies" button')
-                continue
-
-            # Try closing the login thing
-            try:
-                close_login_notif_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'js-dismiss-login-notice-btn.dismiss-btn.btn.btn-link.py-0.px-0')))
-                close_login_notif_button.click()
+                info_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'fs-12.btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo')))
+                info_button.click()
+                print('Passed info popup - clicked')
             except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
-                print('Could not click "Close login" button')
-                continue
+                print('Passed info popup - passed')
+                
+
+
+            # Try closing cookies popup
+            try:
+                cookies_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo')))
+                cookies_button.click()
+                print('Passed cookies popup - clicked')
+            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
+                print('Passed cookies popup - passed')
+                
+
+            # Try closing login popup
+            try:
+                login_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'js-dismiss-login-notice-btn.dismiss-btn.btn.btn-link.py-0.px-0')))
+                login_button.click()
+                print('Passed login popup - clicked')
+            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
+                print('Passed login popup - passed')
+                
+
+
 
             # Try clicking next page button
             try:
                 self.driver.requests.clear()
                 next_page_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']")))
                 next_page_button.click()
+                time.sleep(1.4)
                 print('Going to the next page')
-            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException) as e:
-                print('Could not click "Next page" button')
 
+            # Next page button may be blocker - reload the page an try again
+            except ElementClickInterceptedException:
+
+                print('Something was blocking the button, reloading the page')
                 self.driver.requests.clear()
                 self.driver.refresh()
                 time.sleep(1)
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
-            
-        if not self.second_hidden_api:
-            return None
+                
+
+            except TimeoutException:
+                print('Next page button wasnt found')
+                self.driver.close()
+                return None
+
+            self.second_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://www.emag.ro/search-by-url?source_id=')
+
+            if self.second_hidden_api:
+                self.driver.close()
+                print('Second URL caught')
+                return self.second_hidden_api   
+                
+
 
 
     def set_page_limit_to_100(self, word):
