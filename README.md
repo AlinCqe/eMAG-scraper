@@ -32,3 +32,7 @@ eMAG uses three different methods to show items:
     - Currency (e.g. "RON")
 
 All data is saved into a CSV file using pandas.
+
+
+
+**OUT DATED README**
