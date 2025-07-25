@@ -55,34 +55,13 @@ class Driver:
         for _ in range(5):
 
             # Try closing a info popup
-            try:
-                info_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'fs-12.btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo')))
-                info_button.click()
-                print('Passed info popup - clicked')
-            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
-                print('Passed info popup - passed')
-                
-
+            self.click_button(path='fs-12.btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo', button_name='info popup')
 
             # Try closing cookies popup
-            try:
-                cookies_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo')))
-                cookies_button.click()
-                print('Passed cookies popup - clicked')
-            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
-                print('Passed cookies popup - passed')
-                
+            self.click_button(path='btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo', button_name='cookies popup')
 
             # Try closing login popup
-            try:
-                login_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , 'js-dismiss-login-notice-btn.dismiss-btn.btn.btn-link.py-0.px-0')))
-                login_button.click()
-                print('Passed login popup - clicked')
-            except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
-                print('Passed login popup - passed')
-                
-
-
+            self.click_button(path='js-dismiss-login-notice-btn.dismiss-btn.btn.btn-link.py-0.px-0', button_name='login popup')
 
             # Try clicking next page button
             try:
@@ -92,10 +71,10 @@ class Driver:
                 time.sleep(1.4)
                 print('Going to the next page')
 
-            # Next page button may be blocker - reload the page an try again
+            # Next page button may be blocked - reload the page an try again
             except ElementClickInterceptedException:
 
-                print('Something was blocking the button, reloading the page')
+                print('Something was blocking the next page button, reloading the page')
                 self.driver.requests.clear()
                 self.driver.refresh()
                 time.sleep(1)
@@ -134,3 +113,14 @@ class Driver:
 
                 return url
         return None
+    
+    def click_button(self, path, button_name):
+
+
+        try:
+            cookies_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , path)))
+            cookies_button.click()
+            print(f'Passed {button_name} - clicked')
+        except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
+            print(f'Passed {button_name} popup - didnt appear')
+            
