@@ -89,8 +89,8 @@ class Driver:
             self.second_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://www.emag.ro/search-by-url?source_id=')
 
             if self.second_hidden_api:
+                
                 self.driver.close()
-                print('Second URL caught')
                 return self.second_hidden_api   
                 
 
@@ -122,5 +122,5 @@ class Driver:
             cookies_button.click()
             print(f'Passed {button_name} - clicked')
         except (StaleElementReferenceException, TimeoutException, ElementClickInterceptedException):
-            print(f'Passed {button_name} popup - didnt appear')
+            print(f'Passed {button_name} - didnt appear')
             

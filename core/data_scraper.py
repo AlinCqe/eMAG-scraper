@@ -95,7 +95,6 @@ class DataScaper:
 
         print(f'Used a total of {self.items_used_html_scraper} items in the html scraper')
         print('HTML scraper finished')
-        print(self.items_ids_skip_duplicates)
         return list(self.html_items_ids_used)
             
 
