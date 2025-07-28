@@ -1,14 +1,9 @@
-use console logs instead of prints
-
-
-Second api scraper may be done in more steps
-not return 12k items at once
+Second api scraper may be done in more steps, not returning 12k items at once
 
 Tests for scraper
 
 Mongodb clean up, dont save 100 prices for the same day, just one and if it changes add more than one
 
-run it daily for predifend search terms, just and be able to run all the code or without the second api scraper
+Run it daily for preselected items/search words
 
 
-make .env file and push the db config file too
