@@ -1,4 +1,4 @@
-from core.main import Driver
+from core.fetch_urls import Driver
 import pytest
 
 search_item_mock = 'old spice'

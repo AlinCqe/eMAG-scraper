@@ -1,5 +1,5 @@
 from .fetch_urls import Driver
-from .data_scraper import DataScaper
+from .data_scraper import DataScraper
 from .query import get_items_by_ids
 from concurrent.futures import ThreadPoolExecutor
 
@@ -14,7 +14,7 @@ class ScrapingSession:
         self.search_item = search_item
 
         self.driver = Driver(self.search_item)
-        self.data_scraper = DataScaper(self.search_item)
+        self.data_scraper = DataScraper(self.search_item)
 
         self.first_hidden_api = None
         self.second_hidden_api = None
