@@ -24,16 +24,23 @@ class Driver:
 
     def first_api_fetch(self):
 
+        """"
+
+        Gets the first end point from which eMAG fetches items data based on a search item
+        Uses selenium-wire to monitor network requests and look for a specific API endpoint.
+
+        If the URL isnt found, it refreshes the page and retries until its caught
+
+        """
+
         self.driver.requests.clear()
 
         self.driver.get(f'https://www.emag.ro/search/{self.search_item_formated}')
 
-        # Gets the first hidden api 
         while not self.first_hidden_api:
 
             self.first_hidden_api = self.get_url_from_requests(self.driver.requests, prefix='https://sapi.emag.ro/recommendations/by-zone-by-filters')
 
-            # if it wasnt able to get first api reload the page 
             if not self.first_hidden_api:
                 print('Reloading first page')
                 self.driver.refresh()
@@ -49,29 +56,39 @@ class Driver:
 
     def second_api_fetch(self):
 
-        self.driver.requests.clear()
+        """"
+        Gets the second endpoint used by eMAG to fetch item data
+        This API is typically triggered when navigating to the second page of results
 
+        The function:
+        - Tries to close common popups (info, cookies, login)
+        - Tries to go to the next page up to 5 times
+        - If there's no "Next" button, it assumes there is no second page
+        - If the button exists but is blocked, it refreshes and retries
+        - Once the second API is detected in the requests, it returns the URL
+
+        If not found after all retries, it returns None.
+        """
+
+        self.driver.requests.clear()
 
         for _ in range(5):
 
-            # Try closing a info popup
             self.click_button(path='fs-12.btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo', button_name='info popup')
 
-            # Try closing cookies popup
             self.click_button(path='btn.btn-primary.btn-block.js-accept.gtm_h76e8zjgoo', button_name='cookies popup')
 
-            # Try closing login popup
             self.click_button(path='js-dismiss-login-notice-btn.dismiss-btn.btn.btn-link.py-0.px-0', button_name='login popup')
 
-            # Try clicking next page button
+            # Attempt to click next page button
             try:
                 self.driver.requests.clear()
                 next_page_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']")))
                 next_page_button.click()
                 time.sleep(1.4)
                 print('Going to the next page')
-
-            # Next page button may be blocked - reload the page an try again
+            
+            # Retry in case an element is blocking the button
             except ElementClickInterceptedException:
 
                 print('Something was blocking the next page button, reloading the page')
@@ -80,7 +97,7 @@ class Driver:
                 time.sleep(1)
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
                 
-
+            # If no "Next" button is found, there's probably only one page
             except TimeoutException:
                 print('Next page button wasnt found')
                 self.driver.close()
@@ -97,10 +114,20 @@ class Driver:
 
 
     def set_page_limit_to_100(self, word):
+        """
+        Given a URL, replaces the default page limit with 100 items per page
+        """
+
         return re.sub(r'page%5Boffset%5D=0&page%5Blimit%5D=\d{1,3}', 'page%5Boffset%5D=0&page%5Blimit%5D=100', word)
 
 
     def get_url_from_requests(self, requests_list, prefix):
+
+        """
+        Iterates through the browsers request list and returns the first URL that starts with a specific prefix
+        """
+        
+
         for request in requests_list:
 
             if not request.response:
@@ -116,6 +143,10 @@ class Driver:
     
     def click_button(self, path, button_name):
 
+        """
+        Attempts to click a popup close button based on a class name
+        Logs the result with the buttons purpose (e.g. cookies, login)
+        """
 
         try:
             cookies_button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME , path)))

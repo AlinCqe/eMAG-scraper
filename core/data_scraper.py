@@ -2,6 +2,7 @@ import requests
 from json import JSONDecodeError
 import time
 import random
+from datetime import datetime
 from bs4 import BeautifulSoup
 
 from .db_config import collection
@@ -75,9 +76,9 @@ class DataScraper:
 
             item_data = {'item_id':item_data['item_id'],'item_name': item_data['item_name'], 'item_price':item_data['item_price'],'item_currency':item_data['item_currency']}
             
-            self.db_saving(item_data)
-
-            
+            if self.db_check_before_saving(item_data):
+                self.db_saving(item_data)
+        
             self.items_ids_skip_duplicates.add(item_data['item_id']) 
             self.html_items_ids_used.add(item_data['item_id']) 
             self.items_used_html_scraper += 1
@@ -113,9 +114,8 @@ class DataScraper:
             if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                 continue
 
-
-            self.db_saving(item_data)
-
+            if self.db_check_before_saving(item_data):
+                self.db_saving(item_data)
 
             self.items_ids_skip_duplicates.add(item_data['item_id'])
             self.first_api_items_ids_used.add(item_data['item_id']) 
@@ -174,8 +174,8 @@ class DataScraper:
                 if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                     continue
 
-
-                self.db_saving(item_data)
+                if self.db_check_before_saving(item_data):
+                    self.db_saving(item_data)
                 
                 self.items_ids_skip_duplicates.add(item_data['item_id'])
                 self.items_used_count_second_api += 1
@@ -207,6 +207,48 @@ class DataScraper:
                 }
             }, 
             upsert=True)
+        
+
+
+
+    def db_check_before_saving(self, item):
+        data = collection.find_one({'_id': item['item_id']})
+
+        if not data:
+
+            return True
+        
+
+        current_day = datetime.now().strftime("%a %b %d")
+        history = data['history']
+        date_match = None
+        for day in history.keys():
+            if current_day in day:
+                date_match = day
+
+        if date_match:
+
+            if item['item_price'] == history[date_match].split()[0]:    
+                return False
+                
+
+
+
+        '''
+
+        items_saved_days = set()
+        for day in history.keys():
+            splitd = day.split()
+            date_str = ' '.join(splitd[0:3])
+            items_saved_days.add(date_str)
+
+
+        if current_day in items_saved_days:
+            if item['item_price'] == 
+
+
+        '''
+
 
     def fetch_html_data(self, search_item):
         
