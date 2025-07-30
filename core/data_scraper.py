@@ -75,8 +75,8 @@ class DataScraper:
                 continue
 
             item_data = {'item_id':item_data['item_id'],'item_name': item_data['item_name'], 'item_price':item_data['item_price'],'item_currency':item_data['item_currency']}
-            
-            if self.db_check_before_saving(item_data):
+            # TODO: Optimize this — currently makes 2 DB calls per item; should batch check instead
+            if self.db_check_before_saving(item_data):              
                 self.db_saving(item_data)
         
             self.items_ids_skip_duplicates.add(item_data['item_id']) 
@@ -209,16 +209,23 @@ class DataScraper:
             upsert=True)
         
 
+    def db_check_before_saving(self, item):                
+        """
+        Simple filte before saving items in DB
+
+        Checks if there is alredy a price saved for today
+        If so, it will compare prices, if there isnt any changes it will skip current on
+        But if the price changed it will saved
+        
+        If there isnt a price saved in the smae day it wil automatically save it
+        """
 
 
-    def db_check_before_saving(self, item):
         data = collection.find_one({'_id': item['item_id']})
 
         if not data:
-
             return True
         
-
         current_day = datetime.now().strftime("%a %b %d")
         history = data['history']
         date_match = None
@@ -227,28 +234,9 @@ class DataScraper:
                 date_match = day
 
         if date_match:
-
             if item['item_price'] == history[date_match].split()[0]:    
                 return False
                 
-
-
-
-        '''
-
-        items_saved_days = set()
-        for day in history.keys():
-            splitd = day.split()
-            date_str = ' '.join(splitd[0:3])
-            items_saved_days.add(date_str)
-
-
-        if current_day in items_saved_days:
-            if item['item_price'] == 
-
-
-        '''
-
 
     def fetch_html_data(self, search_item):
         
