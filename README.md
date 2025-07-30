@@ -44,11 +44,70 @@ It fetches product data via HTML and hidden APIs, saves price history, and expos
 - The scraper will fetch product data and save it to MongoDB.
 - Price history is tracked for each product.
 
+
+## API Endpoints
+
+Your frontend interacts with three main endpoints to trigger different scraping methods.
+
+---
+
+### 1. `POST /htmlscraper`
+
+- **Purpose:** Scrape product data from eMAG’s HTML search page.  
+- **Request JSON:**
+  ```json
+  {
+    "query": "laptop"
+  }
+  ```
+- **Response JSON:**  
+  A list of scraped items, each an object like:
+  ```json
+  {
+    "item_id": 123456,
+    "item_name": "Product Name",
+    "item_price": "1999.99",
+    "item_currency": "RON"
+  }
+  ```
+
+---
+
+### 2. `GET /firstapiscraper`
+
+- **Purpose:** Scrape product data from the first hidden API.  
+- **No request body needed.**  
+- **Response JSON:**  
+  A list of scraped items with the same format as `/htmlscraper`.
+
+---
+
+### 3. `GET /secondapiscraper`
+
+- **Purpose:** Scrape product data from the second hidden API (experimental and slower).  
+- **No request body needed.**  
+- **Response JSON:**  
+  A list of scraped items in the same format.  
+- **Note:** Can take up to 10 minutes or more on large queries. Use only when **Deep Search** is enabled.
+
+---
+
+💡 **Usage flow:**
+
+- Frontend calls `/htmlscraper` with the search term.  
+- Then `/firstapiscraper` is called automatically.  
+- If **Deep Search** is checked, `/secondapiscraper` is called last.
+
+---
+
+See your Flask `views.py` file for implementation details.
+
+
 ## Testing
 
 - Run tests with pytest:
     ```bash
-    pytest
+    python3 -m pytest
     ```
 
 ## Project Structure
@@ -71,3 +130,4 @@ It fetches product data via HTML and hidden APIs, saves price history, and expos
 **Note:**  
 - Use responsibly. Scraping large amounts of data may violate eMAG's terms of service.
 - For development only.  
+- The second hidden API scraper is fully functional and stores product data, but its performance is not optimized. It may take up to 10 minutes to complete, especially for large searches. Currently, it doesn't offer a clear benefit over the primary scraper, but it's kept for experimentation and potential future enhancements.
