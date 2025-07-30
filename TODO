@@ -2,8 +2,8 @@ Second api scraper may be done in more steps, not returning 12k items at once
 
 Tests for scraper
 
-Mongodb clean up, dont save 100 prices for the same day, just one and if it changes add more than one
-
 Run it daily for preselected items/search words
 
+In `data_extract_first_api` and others, `db_check_before_saving()` and `db_saving()` both access the DB per item. Try to batch query/check instead.
 
+Scrape more data as link, reviews, photo...

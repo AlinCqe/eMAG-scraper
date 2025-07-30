@@ -1,38 +1,73 @@
-# eMAG Scraper 
+# eMAG Scraper
 
-Hey there! 
+A Python web scraper for eMAG, using Flask, Selenium, BeautifulSoup, and MongoDB.  
+It fetches product data via HTML and hidden APIs, saves price history, and exposes endpoints for scraping.
 
-Welcome to my eMAG scraper :D
+## Features
 
-This is a python script that scrapes the names and prices of items on Emag.ro based on a search query.
-After scraping, it stores the item name and price in to a csv or excel file.
+- Scrape eMAG search results via HTML and hidden APIs
+- Save product price history in MongoDB
+- Avoid duplicate entries and track price changes
+- Web interface for triggering scrapes
+- Easily extensible for more product details (reviews, photos, links, etc.)
 
-## How eMAG.ro displays items
+## Setup
 
-eMAG uses three different methods to show items:
- 1. Static elements in the initial HTML
- 2. A hidden endpoint with up to 100 items (these seem to be some kind of recommended/trend items)
- 3. A second endpoint that contains all the remaining items (maybe the full product list, im not sure)
+1. **Clone the repo:**
+    ```bash
+    git clone https://github.com/AlinCqe/eMAG-scraper.git
+    cd eMAG-scraper
+    ```
 
-## Tools & Methods
+2. **Install dependencies:**
+    ```bash
+    pip install -r requerements.txt
+    ```
 
- - For the static elements i used requests + BeautifulSoup to scrape the HTML 
- - For the hidden APIs, I used Selenium Wire to capture the necessary endpoints.
-      - I couldn't directly call the hidden API with just the search term, because it applies some kind of filters or recommendation logic that I couldn't reverse-engineer.
+3. **Configure MongoDB:**
+    - Add your MongoDB URI to `.env`:
+      ```
+      MONGODB_URI = 'your-mongodb-uri'
+      ```
 
-## Workflow
+4. **Run the Flask app:**
+    ```bash
+    python3 -m app.app
+    ```
 
- 1. Grab the static items from the HTML.
- 2. Use the first endpoint to retrieve up to 100 items.
- 3. Move on to the second endpoint, looping through all pages (could be over 5000 items, with each page containing up to 100).
- 4. A system is in place to skip duplicates so no item is repeated.
- 5. The script extracts:
-    - Item name
-    - Price
-    - Currency (e.g. "RON")
+5. **Access the web interface:**
+    - Open [http://localhost:5000](http://localhost:5000) in your browser.
 
-All data is saved into a CSV file using pandas.
+## Usage
 
+- Enter a search term and optionally enable "Deep Search" for more results.
+- The scraper will fetch product data and save it to MongoDB.
+- Price history is tracked for each product.
 
+## Testing
 
-**OUT DATED README**
+- Run tests with pytest:
+    ```bash
+    pytest
+    ```
+
+## Project Structure
+
+- `app/` — Flask app, templates, static files
+- `core/` — Scraper logic, DB config
+- `test/` — Pytest tests
+- `.env` — MongoDB credentials (not tracked in git)
+- `requerements.txt` — Python dependencies
+
+## TODO
+
+- Batch DB queries for efficiency
+- Scrape more product details (reviews, links, photos)
+- Schedule daily scraping for selected items
+- Tests for DataScraper class
+
+---
+
+**Note:**  
+- Use responsibly. Scraping large amounts of data may violate eMAG's terms of service.
+- For development only.  
