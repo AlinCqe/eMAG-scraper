@@ -9,7 +9,7 @@ today = now.strftime("%Y-%m-%dS")
 
 load_dotenv()
 
-uri = os.getenv('MONGOURI')
+uri = os.getenv('MONGO_URI')
 
 
 client = MongoClient(uri, server_api=ServerApi('1'))
