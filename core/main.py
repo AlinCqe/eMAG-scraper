@@ -48,3 +48,16 @@ class ScrapingSession:
         
 
         return []
+
+
+def main():
+
+
+
+    session = ScrapingSession("g29")
+    
+    session.html_scraper()
+    session.first_api_scraper()
+    session.second_api_scraper()
+
+main()

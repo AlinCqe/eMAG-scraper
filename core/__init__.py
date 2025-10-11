@@ -1,1 +1,1 @@
-from .main import ScrapingSession
+from core.main import ScrapingSession

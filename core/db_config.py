@@ -1,23 +1,28 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi 
+from datetime import datetime
 from dotenv import load_dotenv
-
 import os
+
+now = datetime.now()
+today = now.strftime("%Y-%m-%dS") 
 
 load_dotenv()
 
-uri = os.getenv('MONGODB_URI')
+uri = os.getenv('MONGOURI')
+
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 
-try:
-    client.admin.command('ping')
-except Exception as e:
-    print(e)
-
-
 db = client['eMAG-scraper']
-collection = db['items_data']
+collection = db["2"]
 
 # CAREFUL - DELETES ALL THE DATA IN MONGODB
 #collection.delete_many({})
+
+
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)

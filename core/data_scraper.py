@@ -76,8 +76,8 @@ class DataScraper:
 
             item_data = {'item_id':item_data['item_id'],'item_name': item_data['item_name'], 'item_price':item_data['item_price'],'item_currency':item_data['item_currency']}
             # TODO: Optimize this — currently makes 2 DB calls per item; should batch check instead
-            if self.db_check_before_saving(item_data):              
-                self.db_saving(item_data)
+                     
+            self.db_saving(item_data)
         
             self.items_ids_skip_duplicates.add(item_data['item_id']) 
             self.html_items_ids_used.add(item_data['item_id']) 
@@ -114,8 +114,7 @@ class DataScraper:
             if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                 continue
 
-            if self.db_check_before_saving(item_data):
-                self.db_saving(item_data)
+            self.db_saving(item_data)
 
             self.items_ids_skip_duplicates.add(item_data['item_id'])
             self.first_api_items_ids_used.add(item_data['item_id']) 
@@ -174,8 +173,7 @@ class DataScraper:
                 if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                     continue
 
-                if self.db_check_before_saving(item_data):
-                    self.db_saving(item_data)
+                self.db_saving(item_data)
                 
                 self.items_ids_skip_duplicates.add(item_data['item_id'])
                 self.items_used_count_second_api += 1
@@ -196,19 +194,17 @@ class DataScraper:
         Saves item ID, name, price, and currency to MongoDB
         """
 
-        collection.update_one(
-            {'_id': item['item_id']},
-                {
-                '$setOnInsert':{
-                    'item_name': item['item_name']
-                },
-                '$set':{
-                    f'history.{self.current_time}': f'{item['item_price']} {item['item_currency']}'
-                }
-            }, 
-            upsert=True)
-        
-
+        try:
+            collection.insert_one({
+                '_id': item['item_id'],
+                'item_name': item['item_name'],
+                'item_price': item['item_price'],
+                'item_currency': item['item_currency']
+            })
+            print("Document inserted")
+        except Exception as e:
+            print(f"Someting went wrong: {e}")  # silently ignore any error
+                
     def db_check_before_saving(self, item):                
         """
         Simple filte before saving items in DB
@@ -219,6 +215,8 @@ class DataScraper:
         
         If there isnt a price saved in the smae day it wil automatically save it
         """
+
+        # CURRENTLY NOT IN USE
 
 
         data = collection.find_one({'_id': item['item_id']})
