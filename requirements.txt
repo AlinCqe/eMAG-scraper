@@ -10,3 +10,4 @@ dnspython==2.7.0
 setuptools==80.9.0
 cryptography>=41.0.0
 pyOpenSSL==23.2.0
+webdriver-manager==4.0.2

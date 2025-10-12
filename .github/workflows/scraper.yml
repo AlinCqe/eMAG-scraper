@@ -21,12 +21,13 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y google-chrome-stable chromium-chromedriver libnss3
+          sudo apt install -y google-chrome-stable libnss3 libxss1 libasound2
           python -m pip install --upgrade pip
 
       - name: Install Python dependencies
         run: |
           pip install -r requirements.txt
+          pip install webdriver-manager
 
       - name: Run scraper
         env:
