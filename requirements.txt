@@ -4,9 +4,9 @@ beautifulsoup4==4.13.4
 pymongo==4.13.2
 python-dotenv==1.1.1
 selenium==4.34.0
-selenium-wire==5.0.0
+selenium-wire==5.1.0
 pytest==8.4.1
 dnspython==2.7.0
 setuptools==80.9.0
 cryptography>=41.0.0
-pyOpenSSL==22.0.0
+pyOpenSSL==23.2.0
