@@ -17,7 +17,7 @@ class Driver:
         self.search_item = search_item
         self.search_item_formated = self.search_item.strip().replace(' ', '+')
         self.driver =  webdriver.Chrome(options=self.options )
-        self.wait = WebDriverWait(self.driver, 10)
+        self.wait = WebDriverWait(self.driver, 30)
 
         self.first_hidden_api = None
         self.second_hidden_api = None

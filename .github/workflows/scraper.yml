@@ -24,8 +24,10 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y google-chrome-stable
+          sudo apt-get install -y libnss3 libgconf-2-4
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          
 
       - name: Run scraper
         env:
