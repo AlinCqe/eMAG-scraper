@@ -2,44 +2,35 @@ name: Daily Scraper
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 8 * * *'  # runs every day at 08:00 UTC
   workflow_dispatch:
 
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
 
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            xvfb \
-            libnss3 \
-            libxss1 \
-            libappindicator3-1 \
-            libindicator7 \
-            fonts-liberation \
-            libasound2 \
-            libatk-bridge2.0-0 \
-            libgtk-3-0 \
-            libdrm-dev \
-            libgbm-dev
-          sudo apt install -y google-chrome-stable
-          sudo apt-get install -y libnss3 libgconf-2-4
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
+
+      # 🧩 This installs Chrome + ChromeDriver automatically
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          install-dependencies: true
+
+      - name: Set up ChromeDriver
+        uses: nanasess/setup-chromedriver@v3
 
       - name: Run scraper
         env:
