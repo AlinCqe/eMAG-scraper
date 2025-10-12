@@ -1,3 +1,4 @@
+"""
 from flask import Blueprint, render_template, request, jsonify
 
 from core.main import ScrapingSession
@@ -35,3 +36,4 @@ def second_api_scraper():
 
     global session
     return jsonify(session.second_api_scraper())
+"""
