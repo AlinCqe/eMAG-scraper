@@ -11,11 +11,11 @@ load_dotenv()
 
 uri = os.getenv('MONGO_URI')
 
-
+print(uri)
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 db = client['eMAG-scraper']
-collection = db["2"]
+collection = db[today]
 
 # CAREFUL - DELETES ALL THE DATA IN MONGODB
 #collection.delete_many({})
