@@ -1,5 +1,4 @@
 from .db_config import collection
-from flask import jsonify
 
 
 
