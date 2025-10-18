@@ -50,7 +50,14 @@ class Driver:
                 print('Reloading first page')
                 self.driver.refresh()
                 time.sleep(1)
-                self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
+
+                try:
+                    WebDriverWait(self.driver, 20).until(
+                        lambda d: d.execute_script("return document.readyState") == "complete"
+                    )
+                    print("Page fully loaded!")
+                except TimeoutException:
+                    print("⚠️ Page load timeout — proceeding anyway")
 
         print('Firts URL caught')
 
@@ -100,7 +107,15 @@ class Driver:
                 self.driver.requests.clear()
                 self.driver.refresh()
                 time.sleep(1)
-                self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'has-chat-button')))
+                
+                try:
+                    WebDriverWait(self.driver, 20).until(
+                        lambda d: d.execute_script("return document.readyState") == "complete"
+                    )
+                    print("Page fully loaded!")
+                except TimeoutException:
+                    print("⚠️ Page load timeout — proceeding anyway")
+
                 
             # If no "Next" button is found, there's probably only one page
             except TimeoutException:
