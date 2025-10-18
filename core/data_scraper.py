@@ -4,10 +4,12 @@ import time
 import random
 from datetime import datetime
 from bs4 import BeautifulSoup
+import re
 
-from .db_config import collection
+from .db_config import MongoManager
 
-
+db_manager = MongoManager()
+collection = db_manager.collection
 
 class DataScraper:
 
@@ -40,6 +42,9 @@ class DataScraper:
         self.second_hidden_api = None
         self.second_api_items_ids_used = set()
         self.items_used_count_second_api = 0
+
+        self.unwanted_words = ["set", "pachet", "kit", "pach"]
+            
 
         
     
@@ -75,8 +80,10 @@ class DataScraper:
                 continue
 
             item_data = {'item_id':item_data['item_id'],'item_name': item_data['item_name'], 'item_price':item_data['item_price'],'item_currency':item_data['item_currency']}
-            # TODO: Optimize this — currently makes 2 DB calls per item; should batch check instead
-                     
+           
+            if not self.passes_filter(item_data["item_name"]):
+                continue
+            
             self.db_saving(item_data)
         
             self.items_ids_skip_duplicates.add(item_data['item_id']) 
@@ -114,6 +121,9 @@ class DataScraper:
             if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                 continue
 
+            if not self.passes_filter(item_data["item_name"]):
+                continue
+            
             self.db_saving(item_data)
 
             self.items_ids_skip_duplicates.add(item_data['item_id'])
@@ -157,7 +167,6 @@ class DataScraper:
                 print('Second url scraper finished')
                 return list(self.second_api_items_ids_used)
                 
-
             for item in items:
 
                 try:
@@ -172,7 +181,10 @@ class DataScraper:
 
                 if not all(word in item_data['item_name'].lower() for word in self.search_item_words):
                     continue
-
+                
+                if not self.passes_filter(item_data["item_name"]):
+                    continue
+                
                 self.db_saving(item_data)
                 
                 self.items_ids_skip_duplicates.add(item_data['item_id'])
@@ -201,10 +213,10 @@ class DataScraper:
                 'item_price': item['item_price'],
                 'item_currency': item['item_currency']
             })
-            print("Document inserted")
+           
         except Exception as e:
-            print(f"Someting went wrong: {e}")  # silently ignore any error
-                
+            pass
+
     def db_check_before_saving(self, item):                
         """
         Simple filte before saving items in DB
@@ -263,6 +275,7 @@ class DataScraper:
         item_price_and_currency = item.find('div', 'd-inline-flex align-items-center').find('p', 'product-new-price').text
         item_price_and_currency = item_price_and_currency.removeprefix('de la ')
         item_price, item_currency = item_price_and_currency.split(' ')
+        item_price = str(item_price).replace(",", ".")
 
         return {'item_id':item_id,'item_name': item_name, 'item_price':item_price,'item_currency':item_currency}
 
@@ -288,8 +301,26 @@ class DataScraper:
 
         item_id = int(str(item['id']).strip('"\''))
         item_name = item['name']
-        item_price = item['offer']['price']['current']
+        item_price = str(item['offer']['price']['current']).replace(".", ",")
         item_currency = item['offer']['price']['currency']['name']['display']
 
 
         return {'item_id':item_id,'item_name': item_name, 'item_price':item_price,'item_currency':item_currency}
+
+    def passes_filter(self, item_name):
+
+        pattern = re.compile(r"\b\d+\s*[xX]\s*\d+\s*[mM][lL]\b")
+
+        if pattern.search(item_name):
+            return False
+        
+
+
+        for word in self.unwanted_words:
+            if word in item_name.lower():
+                return False
+        
+        return True
+            
+
+

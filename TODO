@@ -7,3 +7,19 @@ Run it daily for preselected items/search words
 In `data_extract_first_api` and others, `db_check_before_saving()` and `db_saving()` both access the DB per item. Try to batch query/check instead.
 
 Scrape more data as link, reviews, photo...
+
+
+
+
+
+
+
+
+
+
+query function move into db_config class
+
+to dont save sets bundles that contains words like 4 x 50ml use regex, ask gpt
+
+
+save price changes, see how toi save them, in same file? or each day differences in a separated one....

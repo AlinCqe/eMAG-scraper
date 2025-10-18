@@ -1,34 +1,31 @@
 from seleniumwire import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, ElementClickInterceptedException
-from webdriver_manager.chrome import ChromeDriverManager
+
 import time
 import re
 
 class Driver:
 
     def __init__(self, search_item):
+
         self.options = Options()
         self.options.add_argument("--headless")
         self.options.add_argument("window-size=1920,1080")
-        self.options.add_argument("--no-sandbox")
-        self.options.add_argument("--disable-dev-shm-usage")
+        self.options.add_argument("--disable-blink-features=AutomationControlled")
+        self.options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
 
         self.search_item = search_item
         self.search_item_formated = self.search_item.strip().replace(' ', '+')
-        self.driver =  webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=self.options)
 
-        self.wait = WebDriverWait(self.driver, 30)
+        self.driver =  webdriver.Chrome(options=self.options )
+        self.wait = WebDriverWait(self.driver, 15)
 
         self.first_hidden_api = None
         self.second_hidden_api = None
-
 
     def first_api_fetch(self):
 

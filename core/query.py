@@ -1,6 +1,6 @@
-from .db_config import collection
-
-
+from .db_config import MongoManager
+db_manager = MongoManager()
+collection = db_manager.collection
 
 def get_items_by_ids(ids_list):
 

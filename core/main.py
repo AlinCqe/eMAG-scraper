@@ -54,10 +54,11 @@ def main():
 
 
 
-    session = ScrapingSession("g29")
+    session = ScrapingSession("old spice deodorant stick")
     
     session.html_scraper()
     session.first_api_scraper()
     session.second_api_scraper()
-
-main()
+    
+if __name__ =="__main__":
+    main()
