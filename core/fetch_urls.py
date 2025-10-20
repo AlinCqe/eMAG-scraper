@@ -35,7 +35,7 @@ class Driver:
         self.wait = WebDriverWait(self.driver, 15)
 
         self.driver.scopes = ['.*']  
-        self.driver.proxy.verify_ssl = False
+
         
         self.first_hidden_api = None
         self.second_hidden_api = None
