@@ -1,133 +1,92 @@
-# eMAG Scraper
+# eMAG Price Tracker
 
-A Python web scraper for eMAG, using Flask, Selenium, BeautifulSoup, and MongoDB.  
-It fetches product data via HTML and hidden APIs, saves price history, and exposes endpoints for scraping.
+A Python automation project that scrapes eMAG product data daily, tracks price history, and saves results in MongoDB.  
+It uses **Selenium-Wire** and hidden APIs to fetch data efficiently, handles pagination, and avoids duplicate entries.  
+
+---
 
 ## Features
 
-- Scrape eMAG search results via HTML and hidden APIs
-- Save product price history in MongoDB
-- Avoid duplicate entries and track price changes
-- Web interface for triggering scrapes
-- Easily extensible for more product details (reviews, photos, links, etc.)
+- Scrape eMAG search results via HTML and hidden APIs.  
+- Track price changes for products over time.  
+- Store all product details and price history in MongoDB.  
+- Automatically manage pagination, rate-limiting, and request headers.  
+- Designed to run as a daily automation task.  
+
+---
+
+## 💡 How It Works
+
+- Scraper fetches product data via **HTML parsing** and **hidden API endpoints**.  
+- Price changes are compared with the latest stored prices and **recorded if different**.  
+- All product details, prices, and changes are saved in MongoDB in **structured JSON format**.  
+
+---
+
+## 💡 Usage Flow
+
+- `main.py` runs the scraper for all predefined search terms.  
+- Scraper fetches data via **HTML parsing** and hidden APIs.  
+- If a price change is detected, it is **recorded in the price changes collection**.  
+- Updated product data and price history are **saved to MongoDB**.  
+
+---
 
 ## Setup
 
-1. **Clone the repo:**
-    ```bash
-    git clone https://github.com/AlinCqe/eMAG-scraper.git
-    cd eMAG-scraper
-    ```
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/AlinCqe/eMAG-scraper.git
+cd eMAG-scraper
+```
 
 2. **Install dependencies:**
-    ```bash
-    pip install -r requerements.txt
-    ```
+```bash
+pip install -r requirements.txt
+```
+
 
 3. **Configure MongoDB:**
-    - Add your MongoDB URI to `.env`:
-      ```
-      MONGODB_URI = 'your-mongodb-uri'
-      ```
 
-4. **Run the Flask app:**
-    ```bash
-    python3 -m app.app
-    ```
+Create a .env file in the project root.
 
-5. **Access the web interface:**
-    - Open [http://localhost:5000](http://localhost:5000) in your browser.
+Add your MongoDB URI:
+```bash
+MONGODB_URI='your-mongodb-uri'
+```
 
-## Usage
+**Usage**
 
-- Enter a search term and optionally enable "Deep Search" for more results.
-- The scraper will fetch product data and save it to MongoDB.
-- Price history is tracked for each product.
+In core.main, in the main function, change the Scraping session item.
+```bash 
+session = ScrapingSession("eg. G29")
+```
 
+Run the scraper:
+```bash
+python -m core.main.py
+```
 
-## API Endpoints
+-The script fetches products from eMAG for the predefined search terms.
+-Price history and changes are automatically updated in MongoDB.
 
-Your frontend interacts with three main endpoints to trigger different scraping methods.
+**Project Structure**
 
----
+core/ — Scraper logic, DB connection, utilities
+test/ — Tests for scraping and data processing logic
+.env — MongoDB credentials (not tracked in git)
+requirements.txt — Python dependencies
 
-### 1. `POST /htmlscraper`
+**Testing**
 
-- **Purpose:** Scrape product data from eMAG’s HTML search page.  
-- **Request JSON:**
-  ```json
-  {
-    "query": "laptop"
-  }
-  ```
-- **Response JSON:**  
-  A list of scraped items, each an object like:
-  ```json
-  {
-    "item_id": 123456,
-    "item_name": "Product Name",
-    "item_price": "1999.99",
-    "item_currency": "RON"
-  }
-  ```
+**Run tests with pytest:**
+```bash
+python3 -m pytest
+```
 
----
+**Notes**
 
-### 2. `GET /firstapiscraper`
+Make sure to respect eMAG's terms of service when scraping.
 
-- **Purpose:** Scrape product data from the first hidden API.  
-- **No request body needed.**  
-- **Response JSON:**  
-  A list of scraped items with the same format as `/htmlscraper`.
-
----
-
-### 3. `GET /secondapiscraper`
-
-- **Purpose:** Scrape product data from the second hidden API (experimental and slower).  
-- **No request body needed.**  
-- **Response JSON:**  
-  A list of scraped items in the same format.  
-- **Note:** Can take up to 10 minutes or more on large queries. Use only when **Deep Search** is enabled.
-
----
-
-💡 **Usage flow:**
-
-- Frontend calls `/htmlscraper` with the search term.  
-- Then `/firstapiscraper` is called automatically.  
-- If **Deep Search** is checked, `/secondapiscraper` is called last.
-
----
-
-See your Flask `views.py` file for implementation details.
-
-
-## Testing
-
-- Run tests with pytest:
-    ```bash
-    python3 -m pytest
-    ```
-
-## Project Structure
-
-- `app/` — Flask app, templates, static files
-- `core/` — Scraper logic, DB config
-- `test/` — Pytest tests
-- `.env` — MongoDB credentials (not tracked in git)
-- `requerements.txt` — Python dependencies
-
-## TODO
-
-- Batch DB queries for efficiency
-- Scrape more product details (reviews, links, photos)
-- Schedule daily scraping for selected items
-- Tests for DataScraper class
-
----
-
-**Note:**  
-- Use responsibly. Scraping large amounts of data may violate eMAG's terms of service.
-- For development only.  
-- The second hidden API scraper is fully functional and stores product data, but its performance is not optimized. It may take up to 10 minutes to complete, especially for large searches. Currently, it doesn't offer a clear benefit over the primary scraper, but it's kept for experimentation and potential future enhancements.
+Designed for personal or development use only.
