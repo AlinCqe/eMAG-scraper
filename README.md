@@ -12,7 +12,7 @@ It uses **Selenium-Wire** and hidden APIs to fetch data efficiently, handles pag
 - Store all product details and price history in MongoDB.  
 - Automatically manage pagination, rate-limiting, and request headers.  
 - Designed to run as a daily automation task.  
-
+- Show case a chart with price changes a the end of the workflow.
 ---
 
 ## 💡 How It Works
@@ -58,14 +58,14 @@ MONGODB_URI='your-mongodb-uri'
 
 **Usage**
 
-In core.main, in the main function, change the Scraping session item.
+In main.py file, in the main_workflow function, change the Scraping session item.
 ```bash 
-session = ScrapingSession("eg. G29")
+scraping_session = ScrapingSession("eg. G29")
 ```
 
 Run the scraper:
 ```bash
-python -m core.main.py
+python main.py
 ```
 
 -The script fetches products from eMAG for the predefined search terms.
@@ -77,6 +77,7 @@ core/ — Scraper logic, DB connection, utilities
 test/ — Tests for scraping and data processing logic
 .env — MongoDB credentials (not tracked in git)
 requirements.txt — Python dependencies
+main.py - A-to-Z worflow runner
 
 **Testing**
 
