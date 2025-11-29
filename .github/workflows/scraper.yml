@@ -1,9 +1,5 @@
 name: Daily Scraper
 
-on:
-  schedule:
-    - cron: '0 8 * * *'  # every day at 8:00 UTC
-  workflow_dispatch:
 
 jobs:
   run-scraper:
